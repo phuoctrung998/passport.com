@@ -8,6 +8,8 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -29,8 +31,8 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
-
+    //protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/';
     /**
      * Create a new controller instance.
      *
@@ -47,23 +49,57 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
+   
+   /*
+     protected function validator(array $data)
     {
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+       
         
     }
+*/
 
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|confirmed'
+        ]);
+        $user = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
+        ]);
+
+        $success['token'] = $user->createToken('MyApp')->accessToken;
+        $success['name'] = $user->name;
+        
+        $user->save();
+        return response()->json([
+            'message' => 'Account successfully created!', 
+            'token' => $success['token'], 
+            'name' => $success['name'],
+           
+        ], 201);
+    }
+  
+
+
+
+
+    
     /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
+    public function create(array $data)
     {
         return User::create([
             'name' => $data['name'],
@@ -71,4 +107,5 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+    
 }
