@@ -36,7 +36,7 @@ class LoginController extends Controller
      * @return void
      */
     
-    public function login(Request $request)
+   /* public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
@@ -65,7 +65,7 @@ class LoginController extends Controller
             )->toDateTimeString()
         ]);
     }
-
+*/
 
     public function __construct()
     {
