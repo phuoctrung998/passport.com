@@ -18,7 +18,7 @@ class AuthController extends Controller
      * @param  [string] password_confirmation
      * @return [string] message
      */
-    public function signup(Request $request)
+   public function signup(Request $request)
     {
         $request->validate([
             'name' => 'required|string',
@@ -30,9 +30,14 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
+
+        $success['token'] = $user->createToken('MyApp')->accessToken;
+        $success['name'] = $user->name;
+        
         $user->save();
         return response()->json([
-            'message' => 'Successfully created user!'
+            'message' => 'Account successfully created!',
+            'token' => $success
         ], 201);
     }
   
