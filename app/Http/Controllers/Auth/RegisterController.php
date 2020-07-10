@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
@@ -32,7 +33,7 @@ class RegisterController extends Controller
      * @var string
      */
     //protected $redirectTo = RouteServiceProvider::HOME;
-    protected $redirectTo = '/';
+
     /**
      * Create a new controller instance.
      *
@@ -49,8 +50,20 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-   
-   /*
+
+
+ public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+        // ở đây đã xóa dòng $this->guard()->login($user)
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
+    }
+
+
+
      protected function validator(array $data)
     {
         return Validator::make($data, [
@@ -58,11 +71,11 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
-       
-        
-    }
-*/
 
+
+    }
+
+/*
     public function register(Request $request)
     {
         $request->validate([
@@ -78,21 +91,20 @@ class RegisterController extends Controller
 
         $success['token'] = $user->createToken('MyApp')->accessToken;
         $success['name'] = $user->name;
-        
+
         $user->save();
+
         return response()->json([
-            'message' => 'Account successfully created!', 
-            'token' => $success['token'], 
+            'message' => 'Account successfully created!',
+            'email' => $user->email,
             'name' => $success['name'],
-           
+            'create_at' => $user->created_at
+
         ], 201);
+
     }
-  
+*/
 
-
-
-
-    
     /**
      * Create a new user instance after a valid registration.
      *
@@ -107,5 +119,5 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-    
+
 }
