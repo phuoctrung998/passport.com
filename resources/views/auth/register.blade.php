@@ -65,7 +65,8 @@
                             <div class="col-md-6 offset-md-4">
                              <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
-                                </button>
+                                </button><br><br>
+                              <small>  Tự động chuyển đến trang Đăng nhập nếu đăng ký thành công</small>
                             </div>
                         </div>
                     </form>
